@@ -1,2 +1,4 @@
 anovaSpaceAdventure/*.autosave
 anovaSpaceAdventure/data/save.txt
+*.zip
+*.tar
