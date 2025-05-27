@@ -4,6 +4,11 @@
 
 ## JoyStick Serial Input Script (Arduino Script)
 
+### How To
+- Upload `joyStickSerial/joyStickSerial.ino` to your Arduino and you're all set as far as hardware!
+- As for the hardware setup for the controller, refer to the below diagram:
+![Joystick wiring diagram](media/controller_wiring_diagram.png)
+
 ### Features
 
 - Neatly packages raw sensor data from the two potentiometers and button that make up the Arduino joystick into discrete values for forwarding to other applications
