@@ -21,7 +21,7 @@
 
 ### How To
 - Download the executable and dependencies in your operating system's version (only Windws and Linux supported) from the [itch.io](https://joel-ca.itch.io/anova-space-adventure) page
-- (Optionally) create a shortcut of the executable (anovaSpaceAdventure.exe on Windows or anovaSpaceAdventure ELF on Linux) to your desktop for ease of access
+- (Optionally) create a shortcut of the executable (`anovaSpaceAdventure.exe` on Windows or `anovaSpaceAdventure` ELF on Linux) to your desktop for ease of access
 - Run the executable
 - You will be prompted to select the port your Arduino is plugged into, select the right one (you can see which it is from the Arduino IDE)
 - Joystick up/down to navigate the menu and joystick down-press to make a selection
