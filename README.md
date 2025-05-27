@@ -112,9 +112,7 @@
 
 - Progressively more difficult gameplay
 
-  + a greater number of asteroids and
-
-  + jet moves faster the farther along you get
+  + e.g. a greater number of asteroids and jet moving faster the farther along you get
 
 - TBH, the main file, anovaSpaceAdventure.pde, is a bit of a mess right now. It's a mix of gameState, object collision, GUI, sound, Serial, save data, log data, and window resizing, management. I've remedied what was once before an even more atrocious main file by making object files for all the in-game entities (i.e. Asteroid, Jet, Particles, Projectiles), but if future collaborators wish to maintain and develop Anova Space Adventure further, it would be certainly worthwhile to re-organizing the work of the main file into different Manager classes. I've even drafted an AudioManger class, but with the base game working to my liking, I won't be reorganizing further for now.
 - Simple bounding volumes are cheap, but will occasionally lead to noticable imprecesion (e.g. jet clips through top of long asteroid without exploding). I considered implementing a BVH to get the best of both precesion and affordable computation, but have decided to leave this to future work instead since current approach is good probably over 95% of the time.
