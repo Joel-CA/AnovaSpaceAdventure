@@ -4,17 +4,27 @@ class Asteroid {
   int collisionSphereRadius = 50;
   PShape model;
   
+  AudioPlayer explosionSound;
+  
   //For explosion effect
   ArrayList<Particle> explosionParticles = new ArrayList<Particle>();
   boolean exploded = false;
-
-
+  
   Asteroid() {
+    if (random(2) == 0){
+      explosionSound = minim.loadFile("soundFX/387857__runningmind__explosion_asteroid2.mp3");
+    } else {
+      explosionSound = minim.loadFile("soundFX/387858__runningmind__explosion_asteroid.mp3");
+    }
     reset();
   }
   
   void explode() {
     if (!exploded) {
+      if (soundIndicator) {
+        explosionSound.rewind();
+        explosionSound.play();
+      }
       explosionParticles.clear();
       for (int i = 0; i < 50; i++) {
         color bright = color(255, random(50, 100), 0);     // bright orange/yellow
@@ -27,6 +37,8 @@ class Asteroid {
 
   
   void reset() {
+    explosionSound.rewind();
+    
     pos.x = random(-400, 400);
     pos.y = random(-300, 300);
     pos.z = -random(1000, 4000); // Start far in front

@@ -7,6 +7,8 @@ class Jet {
   int collisionSphereRadius = 100;
   int zOffset = 20;
 
+  AudioPlayer explosionSound, fireSound;
+  
   ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
   
   //For explosion effect
@@ -16,13 +18,16 @@ class Jet {
   float pitch = 0;
   float yaw = 0;
 
-  Jet(String modelPath, float scaleFactor, PVector centerPosition) {
-    model = loadShape(modelPath);
+  Jet(float scaleFactor, PVector centerPosition) {
+    model = loadShape("3d_models/Jet_Lowpoly.obj");
     model.scale(scaleFactor);
 
     center = centerPosition.copy();
     boxMin = PVector.sub(center, bboxDim);
     boxMax = PVector.add(center, bboxDim);
+    
+    explosionSound = minim.loadFile("soundFX/317750__jalastram__sfx_explosion_01.mp3");
+    fireSound = minim.loadFile("soundFX/404796__owlstorm__retro-video-game-sfx-laser.mp3");
   }
 
   void updateOrientation(int xRaw, int yRaw) {
@@ -45,6 +50,7 @@ class Jet {
       // When all particles are dead, end game
       if (explosionParticles.size() > 0 && explosionParticles.get(0).isDead()) {
         exploded = false; // get jet ready for respawn
+        explosionSound.rewind();
         return false;
       }
     } else{ //update projectiles
@@ -61,11 +67,19 @@ class Jet {
   }
 
   void fire() {
+    if (soundIndicator) {
+      fireSound.rewind();
+      fireSound.play();
+    }
     projectiles.add(new Projectile(pitch, yaw));
   }
   
   void explode() {
     if (!exploded) {
+      if (soundIndicator) {
+        explosionSound.rewind();
+        explosionSound.play();
+      }
       explosionParticles.clear();
       for (int i = 0; i < 50; i++) {
         color bright = color(0,random(200,255),255);    // bright cyan(ish)

@@ -35,7 +35,7 @@ public class AudioManager {
 
   public void checkAdvance() {
     AudioPlayer t = tracks.get(current);
-    if (t.position() > t.length() - fadeDur) beginCrossfade();
+    if (t.position() > t.length() - fadeDuration) beginCrossfade();
   }
 
   public void beginCrossfade() {
@@ -48,7 +48,7 @@ public class AudioManager {
   }
 
   public void crossfadeStep() {
-    float t = (millis() - crossStart) / fadeDur;
+    float t = (millis() - crossStart) / fadeDuration;
     t = constrain(t, 0, 1);
     float o = cos(t*HALF_PI), i = sin(t*HALF_PI);
     float gO = (o>0 ? 20*log(o)/log(10) : -80),

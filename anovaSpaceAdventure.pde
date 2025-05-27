@@ -10,6 +10,7 @@ boolean ignoreSerialInput = true;
 // audio
 Minim minim;
 HashMap<Integer, AudioPlayer> musicLib;
+AudioPlayer menuSelect, menuScroll;
 int currentTrack = 1;
 int nextTrack = -1;
 float fadeDuration = 1000; //ms
@@ -123,7 +124,11 @@ void setup() {
   musicLib.put(3, minim.loadFile("music/luckylittleraven__spacejamloop3of3.mp3"));
   musicLib.put(4, minim.loadFile("music/436196__robbostar__space-station-ambiance-with-chords.mp3"));
 
-  jet = new Jet("3d_models/Jet_Lowpoly.obj", 20, new PVector(width/2, height/2, 0));
+  /* load soundFX */
+  menuSelect = minim.loadFile("soundFX/150222__pumodi__menu-select.mp3");
+  menuScroll = minim.loadFile("soundFX/341024__aceofspadesproduc100__blip-2.mp3");
+
+  jet = new Jet(20, new PVector(width/2, height/2, 0));
   prevWidth = width;
   prevHeight = height;
 
@@ -179,8 +184,10 @@ int totalMainMenuOptions = 4;
 void mainMenu() {
   // play menu music
   AudioPlayer mainTheme = musicLib.get(0);
-  if (!mainTheme.isPlaying()) {
-    mainTheme.play();
+  if (musicIndicator) {
+    if (!mainTheme.isPlaying()) {
+      mainTheme.play();
+    }
   }
   
   // Map yRaw input to selection change
@@ -190,11 +197,19 @@ void mainMenu() {
   if (now - lastSelectionChangeTime > selectionCooldown && menuReady) {
     ignoreSerialInput = false;  // allow input to start affecting the UI
     if (y < 400) {           // move up
+      if (soundIndicator) {
+        menuScroll.rewind();
+        menuScroll.play();
+      }
       mainMenuSelection = (mainMenuSelection - 1 + totalMainMenuOptions) 
                           % totalMainMenuOptions;
       lastSelectionChangeTime = now;
     } 
     else if (y > 600) {      // move down
+      if (soundIndicator) {
+        menuScroll.rewind();
+        menuScroll.play();
+      }
       mainMenuSelection = (mainMenuSelection + 1) 
                           % totalMainMenuOptions;
       lastSelectionChangeTime = now;
@@ -203,6 +218,10 @@ void mainMenu() {
 
   // Handle selection (e.g. btn == 0 = select)
   if (btn == 0 && menuReady) {
+    if (soundIndicator) {
+      menuSelect.rewind();
+      menuSelect.play();
+    }
     if (mainMenuSelection == 0) {
       if (DEBUG_LOG){
         println("Play selected");
@@ -210,12 +229,14 @@ void mainMenu() {
       gameState = 1;
       
       /*set game music*/
-      mainTheme.pause();
-      currentTrack = 1;
-      AudioPlayer player = musicLib.get(currentTrack);
-      player.rewind();
-      player.setGain(0); // full volume
-      player.play(); //play track 1
+      if (musicIndicator) {
+        mainTheme.pause();
+        currentTrack = 1;
+        AudioPlayer player = musicLib.get(currentTrack);
+        player.rewind();
+        player.setGain(0); // full volume
+        player.play(); //play track 1
+      }
       
     } else if (mainMenuSelection == 1) {
       if (DEBUG_LOG){
@@ -258,16 +279,33 @@ int settingsMenuSelection = 0;
 int totalSettingsMenuOptions = 4;
 
 void settingsMenu() {
+  AudioPlayer mainTheme = musicLib.get(0);
+  if (musicIndicator) {
+    if (!mainTheme.isPlaying()) {
+      mainTheme.play();
+    }
+  } else {
+    mainTheme.pause();
+  }
+  
   int now = millis();
   boolean menuReady = (now - menuStartTime >= warmUp); // 1-second warm-up
   
   if (now - lastSelectionChangeTime > selectionCooldown && menuReady) {
     if (y < 400) {           // move up
+      if (soundIndicator) {
+        menuScroll.rewind();
+        menuScroll.play();
+      }
       settingsMenuSelection = (settingsMenuSelection - 1 + totalSettingsMenuOptions) 
                           % totalSettingsMenuOptions;
       lastSelectionChangeTime = now;
     } 
     else if (y > 600) {      // move down
+      if (soundIndicator) {
+        menuScroll.rewind();
+        menuScroll.play();
+      }
       settingsMenuSelection = (settingsMenuSelection + 1) 
                           % totalSettingsMenuOptions;
       lastSelectionChangeTime = now;
@@ -276,6 +314,10 @@ void settingsMenu() {
 
   // Handle selection (e.g. btn == 0 = select)
   if (btn == 0 && now - lastSelectionChangeTime > selectionCooldown && menuReady) {
+    if (soundIndicator) {
+      menuSelect.rewind();
+      menuSelect.play();
+    }
     if (settingsMenuSelection == 0) {
       if (DEBUG_LOG) {
         println("Music selected");
@@ -326,40 +368,42 @@ void settingsMenu() {
 }
 
 void mainGameLoop() {
-  // check if the current track has finished
-  AudioPlayer current = musicLib.get(currentTrack);
-  // If current track is near end, begin crossfade
-  if (!isCrossfading && current.position() > current.length() - fadeDuration) {
-    startCrossfade();
-  }
-
-  // Handle crossfading logic
-  if (isCrossfading) {
-    float elapsed = millis() - crossfadeStartTime;
-    float progress = constrain(elapsed / fadeDuration, 0, 1);
-    //float eased = fadeCurveExponential(progress);
-    
-    // constant-power weights
-    float ampOut = cos(progress * HALF_PI);
-    float ampIn  = sin(progress   * HALF_PI);
-    
-    // convert to dB
-    float gainOutDB = (ampOut > 0 ? 20 * log(ampOut) / log(10) : -80);
-    float gainInDB  = (ampIn  > 0 ? 20 * log(ampIn)  / log(10) : -80);
-
-    // Fade out current
-    AudioPlayer cur = musicLib.get(currentTrack);
-    //float curGain = lerp(0, -80, progress);
-    cur.setGain(gainOutDB);
-    
-    AudioPlayer nxt = musicLib.get(nextTrack);
-    nxt.setGain(gainInDB);
-    
-    if (progress >= 1) {
-      cur.pause();
-      cur.rewind();
-      currentTrack = nextTrack;
-      isCrossfading = false;
+  if (musicIndicator) {
+    // check if the current track has finished
+    AudioPlayer current = musicLib.get(currentTrack);
+    // If current track is near end, begin crossfade
+    if (!isCrossfading && current.position() > current.length() - fadeDuration) {
+      startCrossfade();
+    }
+  
+    // Handle crossfading logic
+    if (isCrossfading) {
+      float elapsed = millis() - crossfadeStartTime;
+      float progress = constrain(elapsed / fadeDuration, 0, 1);
+      //float eased = fadeCurveExponential(progress);
+      
+      // constant-power weights
+      float ampOut = cos(progress * HALF_PI);
+      float ampIn  = sin(progress   * HALF_PI);
+      
+      // convert to dB
+      float gainOutDB = (ampOut > 0 ? 20 * log(ampOut) / log(10) : -80);
+      float gainInDB  = (ampIn  > 0 ? 20 * log(ampIn)  / log(10) : -80);
+  
+      // Fade out current
+      AudioPlayer cur = musicLib.get(currentTrack);
+      //float curGain = lerp(0, -80, progress);
+      cur.setGain(gainOutDB);
+      
+      AudioPlayer nxt = musicLib.get(nextTrack);
+      nxt.setGain(gainInDB);
+      
+      if (progress >= 1) {
+        cur.pause();
+        cur.rewind();
+        currentTrack = nextTrack;
+        isCrossfading = false;
+      }
     }
   }
   
@@ -384,9 +428,11 @@ void mainGameLoop() {
       p.pause();
     }
     menuStartTime = millis();
-    AudioPlayer gameOverTrack = musicLib.get(4);
-    gameOverTrack.rewind();
-    gameOverTrack.play();
+    if (musicIndicator) {
+      AudioPlayer gameOverTrack = musicLib.get(4);
+      gameOverTrack.rewind();
+      gameOverTrack.play();
+    }
     gameState = 4; // Game Over
   }
 
@@ -458,11 +504,19 @@ void gameOver() {
   
   if (now - lastSelectionChangeTime > selectionCooldown && menuReady) {
     if (y < 400) {           // move up
+      if (soundIndicator) {
+        menuScroll.rewind();
+        menuScroll.play();
+      }
       gameOverMenuSelection = (gameOverMenuSelection - 1 + totalGameOverMenuOptions) 
                           % totalGameOverMenuOptions;
       lastSelectionChangeTime = now;
     } 
     else if (y > 600) {      // move down
+      if (soundIndicator) {
+        menuScroll.rewind();
+        menuScroll.play();
+      }
       gameOverMenuSelection = (gameOverMenuSelection + 1) 
                           % totalGameOverMenuOptions;
       lastSelectionChangeTime = now;
@@ -471,7 +525,13 @@ void gameOver() {
 
   // Handle selection (e.g. btn == 0 = select)
   if (btn == 0 && menuReady) {
-    musicLib.get(4).pause();
+    if (soundIndicator) {
+      menuSelect.rewind();
+      menuSelect.play();
+    }
+    if (musicIndicator) {
+      musicLib.get(4).pause();
+    }
     if (gameOverMenuSelection == 0) {
       if (DEBUG_LOG){
         println("Respawn selected");
@@ -479,11 +539,13 @@ void gameOver() {
       //Ready for respawn
       gameReset();
       gameState = 1;
-      currentTrack = 1;
-      AudioPlayer p = musicLib.get(currentTrack);
-      p.rewind();
-      p.setGain(0);
-      p.play(); //play track 1
+      if (musicIndicator) {
+        currentTrack = 1;
+        AudioPlayer p = musicLib.get(currentTrack);
+        p.rewind();
+        p.setGain(0);
+        p.play(); //play track 1
+      }
     } else if (gameOverMenuSelection == 1) {
       if (DEBUG_LOG){
         println("Main Menu selected");
@@ -509,11 +571,22 @@ void gameOver() {
 }
 
 void credits() {
+  if (musicIndicator) {
+    AudioPlayer mainTheme = musicLib.get(0);
+    if (!mainTheme.isPlaying()) {
+      mainTheme.play();
+    }
+  }
+  
   int now = millis();
   boolean menuReady = (now - menuStartTime >= warmUp); // 1-second warm-up
 
   // Handle selection (e.g. btn == 0 = select)
   if (btn == 0 && (now - lastSelectionChangeTime > selectionCooldown) && menuReady) {
+    if (soundIndicator) {
+      menuSelect.rewind();
+      menuSelect.play();
+    }
     if (DEBUG_LOG) {
       println("Back button selected");
     }
@@ -528,7 +601,7 @@ void credits() {
   
   // Base settings for body text
   textSize(16);
-  float lineHeight = 20;
+  float lineHeight = 19;
   float y = height / 10;
 
   // Helper to render lines centered
@@ -538,19 +611,24 @@ void credits() {
     "ANOVA SPACE ADVENTURE",
     "Original game by Joel Castro",
     "",
-    "3D Models",
+    "3D MODELS",
     "Courtesy of Sketchfab",
     "8 Low Poly Asteroids by Everios96",
     "Courtesy of Turbosquid",
     "Jet low-poly by funbug3d",
     "",
-    "Music courtesy of Freesound.org",
-    "\"Space Jam Loop (1, 2, & 3)\",",
+    "MUSIC & SOUNDFX",
+    "Courtesy of Freesound.org",
+    "\"Space Jam Loop [1, 2, & 3]\",",
     "by LuckyLittleRaven",
-    "\"Space Syndrome\",",
-    "by X3nus",
+    "\"Space Syndrome\", by X3nus",
     "\"Space Station Ambiance (With Chords)\",",
     "by RobboStar",
+    "SFX_Explosion_01 by jalastram",
+    "explosion_asteroid [1 & 2] by runningmind",
+    "\"Menu Select\" by pumodi",
+    "\"Blip 2\" by AceOfSpadesProductions",
+    "\"Laser\" by Ashe Kirk @ Owlish Media",
     "",
     "© 2025 by Berkeley ANova with <3"
   };
@@ -560,9 +638,9 @@ void credits() {
     y += lineHeight;
   }
 
-  float buttonW = 200;
-  float buttonH = 60;
-  float backY = y + 50;
+  float buttonW = 150;
+  float buttonH = 25;
+  float backY = y + 0;
   
   drawButton(width / 2 - buttonW / 2, backY, buttonW, buttonH, "BACK", true);
 }
