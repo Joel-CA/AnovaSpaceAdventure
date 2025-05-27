@@ -2,6 +2,7 @@
 **An endless space flyer for the Arduino joystick! Navigate your jet through an asteroid field. Destroy asteroids and survive! How far can you get?**
 
 ## JoyStick Serial Input Script (Arduino Script)
+### Features
 - Neatly packages raw sensor data into from the two potentiomitors and button that make up the arduino joystick into discrete values for forwarding to other applications
 - In the case of Anova Space Adventure, this scripts **acts as the mediator between the controller and the game**
 
