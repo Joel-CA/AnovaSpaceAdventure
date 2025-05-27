@@ -5,9 +5,11 @@
 ## JoyStick Serial Input Script (Arduino Script)
 
 ### How To
-- Upload `joyStickSerial/joyStickSerial.ino` to your Arduino and you're all set as far as software!
-- As for the hardware setup for the controller, refer to the below diagram:
+- Upload `joyStickSerial/joyStickSerial.ino` to your Arduino. This script can be downloaded from this repo or the itch.io page
+- Refer to the below diagram for the hardware setup for the controller:
 ![Joystick wiring diagram](media/controller_wiring_diagram.png)
+- Set your Serial Monitor baudRate = 115200 and verify you can see the raw input stream
+  + You can set the baud rate in the Arduino IDE's Serial Monitor by finding baud rate in the bottom right corner of the Serial Monitor window
 
 ### Features
 
@@ -16,6 +18,15 @@
 - In the case of Anova Space Adventure, this script **acts as the mediator between the controller and the game**
 
 ## Anova Space Adventure (Processing Application)
+
+### How To
+- Download the executable and dependencies in your operating system's version (only Windws and Linux supported) from the itch.io page
+- (Optionally) create a shortcut of the executable (anovaSpaceAdventure.exe on Windows or anovaSpaceAdventure ELF on Linux) to your desktop for ease of access
+- Run the executable
+- You will be prompted to select the port your Arduino is plugged into, select the right one (you can see which it is from the Arduino IDE)
+- Joystick up/down to navigate the menu and joystick down-press to make a selection
+- In settings you can toggle music, soundFX, and the visibility of in-game object bounding boxes
+- Use joystick up/down/left/right to controll jet pitch and yaw. Down-press joystick to fire layer darts. Hit asteroids with lasers to score points. If your jet collides with an asteroid you loose. Godspeed adventurer! 
 
 ### Features
 
@@ -101,15 +112,15 @@
 
 - Progressively more difficult gameplay
 
-  + a greater number of asteroids
+  + a greater number of asteroids and
 
-  + jet moves faster
+  + jet moves faster the farther along you get
 
-- TBH, the main file, anovaSpaceAdventure.pde, is a bit of a mess right now. It's a mix of gameState, object collision, GUI, sound, Serial, save data, log data, and window resizing, management. I've remedied an even more atrocious main file by making object files for all the in-game entities (i.e. Asteroid, Jet, Particles, Projectiles), but if future collaborators wish to maintain and develop Anova Space Adventure further, it would be certainly worth re-organizing the work of the main file into different Manager classes. I've even drafted an AudioManger class, but with the base game working to my liking, I won't be reorganizing further for now.
+- TBH, the main file, anovaSpaceAdventure.pde, is a bit of a mess right now. It's a mix of gameState, object collision, GUI, sound, Serial, save data, log data, and window resizing, management. I've remedied what was once before an even more atrocious main file by making object files for all the in-game entities (i.e. Asteroid, Jet, Particles, Projectiles), but if future collaborators wish to maintain and develop Anova Space Adventure further, it would be certainly worthwhile to re-organizing the work of the main file into different Manager classes. I've even drafted an AudioManger class, but with the base game working to my liking, I won't be reorganizing further for now.
 
 ### 🐛 Known Bugs/Limitation(s):
 
-TL;DR: Most joystick Serial issues can be resolved by restarting the application. For your convenience, **pressing 'r' on your keyboard will restart the application automatically**.
+TL;DR: Most joystick Serial issues can be resolved by restarting the application. For your convenience, **pressing 'r' on your keyboard will restart the application automatically** (on Windows anyways-- you'll probably need to manually restart on Linux OS).
 
 - If you unplug your input device/Arduino while running the application, the application will not be able to re-detect serial input even after plugging your device back in. Instead, restart the application and reselect your port. Alternatively, don't unplug your controller mid-game.
 
