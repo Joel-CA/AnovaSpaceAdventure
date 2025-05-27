@@ -5,7 +5,7 @@
 ## JoyStick Serial Input Script (Arduino Script)
 
 ### How To
-- Upload `joyStickSerial/joyStickSerial.ino` to your Arduino. This script can be downloaded from this repo or the itch.io page
+- Upload `joyStickSerial/joyStickSerial.ino` to your Arduino. This script can be downloaded from this repo or the [itch.io](https://joel-ca.itch.io/anova-space-adventure) page
 - Refer to the below diagram for the hardware setup for the controller:
 ![Joystick wiring diagram](media/controller_wiring_diagram.png)
 - Set your Serial Monitor baudRate = 115200 and verify you can see the raw input stream
@@ -20,7 +20,7 @@
 ## Anova Space Adventure (Processing Application)
 
 ### How To
-- Download the executable and dependencies in your operating system's version (only Windws and Linux supported) from the itch.io page
+- Download the executable and dependencies in your operating system's version (only Windws and Linux supported) from the [itch.io](https://joel-ca.itch.io/anova-space-adventure) page
 - (Optionally) create a shortcut of the executable (anovaSpaceAdventure.exe on Windows or anovaSpaceAdventure ELF on Linux) to your desktop for ease of access
 - Run the executable
 - You will be prompted to select the port your Arduino is plugged into, select the right one (you can see which it is from the Arduino IDE)
