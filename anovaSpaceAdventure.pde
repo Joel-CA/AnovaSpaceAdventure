@@ -41,9 +41,12 @@ int warmUp = 800; // ms delay at startup before menu listens to any input
 int selectionCooldown = 500; // ms delay between menu selection changes
 
 //settings
-Boolean musicIndicator = true;
-Boolean soundIndicator = true;
-Boolean volumesIndicator = false;
+boolean musicIndicator = true;
+boolean soundIndicator = true;
+boolean volumesIndicator = false;
+int highScore = 0;
+
+String prefsFile = "save.txt";
 
 void setup() {
   
@@ -740,6 +743,47 @@ void stopMinim() {
       p.close();
     }
     minim.stop();
+}
+
+// Load preferences from file if it exists
+void loadPreferences() {
+  File file = new File(dataPath(prefsFile));
+  if (file.exists()) {
+    String[] lines = loadStrings(prefsFile);
+    if (lines.length >= 4) {
+      musicIndicator = Boolean.parseBoolean(lines[0]);
+      soundIndicator = Boolean.parseBoolean(lines[1]);
+      volumesIndicator = Boolean.parseBoolean(lines[2]);
+      highScore = Integer.parseInt(lines[3]);
+      if (DEBUG_LOG) {
+        println("Preferences loaded.");
+      }
+    } else {
+      if (DEBUG_LOG) {
+        println("Preferences file is incomplete. Using default values.");
+      }
+      savePreferences();
+    }
+  } else {
+    if (DEBUG_LOG){
+      println("No preferences file found. Using default values.");
+    }
+    savePreferences();  // Create file with default values
+  }
+}
+
+// Save preferences to file
+void savePreferences() {
+  String[] lines = {
+    String.valueOf(musicIndicator),
+    String.valueOf(soundIndicator),
+    String.valueOf(volumesIndicator),
+    String.valueOf(highScore)
+  };
+  saveStrings(prefsFile, lines);
+  if (DEBUG_LOG){
+    println("Preferences saved.");
+  }
 }
 
 void restartApp() {
