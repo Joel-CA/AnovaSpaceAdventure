@@ -2,6 +2,15 @@
 
 **An endless space flyer for the Arduino joystick! Navigate your jet through an asteroid field. Destroy asteroids and survive! How far can you get?**
 
+[![Demo Video](media/aruino_picture.jpg)](https://youtu.be/4XButFk4vBE)
+<p float="left">
+  <img src="media/mainMenuWScore.png" width="200" />
+  <img src="media/boundingVolumesExplosion.png" width="200" />
+  <img src="media/gameLoop.png" width="200" />
+  <img src="media/boundingVolumesON.png" width="200" />
+</p>
+
+
 ## JoyStick Serial Input Script (Arduino Script)
 
 ### How To
