@@ -85,7 +85,7 @@
 
 #### Procedural star background animation
 
-  + Similar to asteroid logic, but random positions are wider to occupy spots in the entire viewing frustum, but excluding some of the center of the frustum to avoid visual glitches (e.g., star flying through the jet) and for overall visual appeal
+  + Similar to asteroid logic, but random spawn positions are less constrained as to occupy all over the entire viewing frustum, excluding the center of the viewing frustum to avoid visual glitches (e.g., star flying through the jet)
 
 #### Collision detection (jet-asteroid and projectile-asteroid)
 
@@ -95,9 +95,9 @@
 
   + A sphere roughly fits asteroids
 
-  + A height-thin and width-long rectangle roughly fits the jet
+  + A height-thin and width-long box roughly fits the jet
 
-  + Hence, jet-asteroid collision detection reduced to sphere-rectangle collision detection
+  + Hence, jet-asteroid collision detection reduced to sphere-box collision detection
 
     - Requires a check for if points within the radial distance from the sphere center are bounded by all sides of the box
 
@@ -124,7 +124,7 @@
   + e.g. a greater number of asteroids and jet moving faster the farther along you get
 
 - TBH, the main file, anovaSpaceAdventure.pde, is a bit of a mess right now. It's a mix of gameState, object collision, GUI, sound, Serial, save data, log data, and window resizing, management. I've remedied what was once before an even more atrocious main file by making object files for all the in-game entities (i.e. Asteroid, Jet, Particles, Projectiles), but if future collaborators wish to maintain and develop Anova Space Adventure further, it would be certainly worthwhile to re-organizing the work of the main file into different Manager classes. I've even drafted an AudioManger class, but with the base game working to my liking, I won't be reorganizing further for now.
-- Simple bounding volumes are cheap, but will occasionally lead to noticable imprecesion (e.g. jet clips through top of long asteroid without exploding). I considered implementing a BVH to get the best of both precesion and affordable computation, but have decided to leave this to future work instead since current approach is good probably over 95% of the time.
+- Simple bounding volumes are cheap, but will occasionally lead to noticable imprecesion (e.g. jet or projectile clips the ends of a long asteroid w/out exploding). I considered implementing a BVH to get the best of both precesion and affordable computation, but have decided to leave this to future work instead since current approach is good probably over 95% of the time.
 
 ### 🐛 Known Bugs/Limitation(s):
 
